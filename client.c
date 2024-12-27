@@ -7,25 +7,6 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-// Funzionamento client
- 
-      /*
-      nck false
-      inizializzazione
-      
-      while 1
-      menu iniziale
-      
-      if(!nck)
-          connessione server
-          nck true
-        
-        scelta tema
-        while(1)
-        domande 
-        risposte: se exit -> nck false
-      
-      */
 
 int main(int argc, char* argv[]) {
     
