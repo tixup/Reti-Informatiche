@@ -1,0 +1,10 @@
+Chi ha fondato Microsoft?
+Bill Gates e Paul Allen
+Quale azienda ha introdotto il primo personal computer commerciale nel 1981?
+IBM
+Quale linguaggio di programmazione è usato per creare Linux?
+C
+Che cos'è HTTP?
+Un protocollo di trasferimento ipertestuale
+Qual è il numero massimo di indirizzi IPv4 disponibili?
+4,294,967,296
