@@ -9,6 +9,11 @@
 
 
 int main(int argc, char* argv[]) {
+
+    if(argc != 2){
+        fprintf(stderr, "Uso corretto: %s <porta> \n", argv[0]);
+        exit(1);
+    }
     
     /* Strutture dati */
     int sock, ret;
