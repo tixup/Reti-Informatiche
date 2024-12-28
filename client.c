@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
           // Riceve e stampa il messaggio per il nickname
           control = doppia_recv(sock, buffer); 
           // Controllo che il server sia sempre online
-          if(verify_server(buffer) == 0 || control == -2){
+          if(verify_server(buffer) == 0 || control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
           }
@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
           
           // Riceve e stampa esito nickname 
           control = doppia_recv(sock, buffer);
-          if(verify_server(buffer) == 0 || control == -2){
+          if(verify_server(buffer) == 0 ||  control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
           }
@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
               doppia_send(sock, formatted_response, strlen(formatted_response));
               memset(buffer, 0, BUFFER_SIZE);
               control = doppia_recv(sock, buffer); 
-              if(verify_server(buffer) == 0 || control == -2){
+              if(verify_server(buffer) == 0 ||  control <= 0){
                   printf("Il Server si è disconnesso. Quiz terminato.\n");
                   break;
               }
@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
           
           // Riceve e stampa menù Temi
           control = doppia_recv(sock, buffer); 
-          if(verify_server(buffer) == 0 || control == -2){
+          if(verify_server(buffer) == 0 ||  control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
           }
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
         } else {
           // Riceve e stampa direttamente menù dei Temi dato che ha già nickname
           control = doppia_recv(sock, buffer);
-          if(verify_server(buffer) == 0 || control == -2){
+          if(verify_server(buffer) == 0 ||  control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
           }
@@ -183,7 +183,7 @@ int main(int argc, char* argv[]) {
           memset(buffer, 0, BUFFER_SIZE);
           // Ricezione esito del tema
           control = doppia_recv(sock, buffer);
-          if(verify_server(buffer) == 0 || control == -2){
+          if(verify_server(buffer) == 0 ||  control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
           }
@@ -205,7 +205,7 @@ int main(int argc, char* argv[]) {
           
           // Riceve una domanda o messaggio dal server
           control = doppia_recv(sock, buffer); 
-          if(verify_server(buffer) == 0 || control == -2){
+          if(verify_server(buffer) == 0 ||  control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
           }
@@ -240,7 +240,7 @@ int main(int argc, char* argv[]) {
               nck = false;
               memset(buffer, 0, BUFFER_SIZE);
               control = doppia_recv(sock, buffer);
-              if(verify_server(buffer) == 0 || control == -2){
+              if(verify_server(buffer) == 0 ||  control <= 0){
                   printf("Il Server si è disconnesso. Quiz terminato.\n");
                   break;
               }
@@ -253,7 +253,7 @@ int main(int argc, char* argv[]) {
           
           // Riceve e mostra esito della risposta e il menù comandi
           control = doppia_recv(sock, buffer); 
-          if(verify_server(buffer) == 0 || control == -2){
+          if(verify_server(buffer) == 0 ||  control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
           }
