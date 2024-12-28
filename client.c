@@ -10,6 +10,7 @@
 
 int main(int argc, char* argv[]) {
 
+    /* Controllo se la porta è stata inserita correttamente */
     if(argc != 2){
         fprintf(stderr, "Uso corretto: %s <porta> \n", argv[0]);
         exit(1);
