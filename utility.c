@@ -327,7 +327,7 @@ void display_sorted_leaderboard(char *buffer, LeaderboardEntry leaderboard[], in
         strncat(buffer, entry, BUFFER_SIZE - strlen(buffer) - 1);
     }
     
-    strcpy(entry, "Digita 'next' per proseguire o rispondi alla domanda precedente.\n");
+    strcpy(entry, "Digita 'next' per proseguire.\n");
     strncat(buffer, entry, BUFFER_SIZE - strlen(buffer) - 1);
 }
 
