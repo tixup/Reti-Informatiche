@@ -71,11 +71,11 @@ int main(int argc, char* argv[]) {
     /* Visualizzo all'avvio la lista dei Temi */
     snprintf(buffer, BUFFER_SIZE, 
             "------ Trivia Quiz -----\n"
-            "++++++++++++++++++++++++\n"
+            "+++++++++++++++++++++++++\n"
             "Temi:\n"
             "1 - Curiosità sulla Tecnologia\n"
             "2 - Cultura Generale\n"
-            "++++++++++++++++++++++++\n");
+            "+++++++++++++++++++++++++\n");
     printf("%s", buffer);
     
     /* Visualizzo partecipanti Online */
@@ -159,11 +159,11 @@ int main(int argc, char* argv[]) {
                                 } else {
                                     // Creo e invio menù dei temi al partecipante
                                     snprintf(buffer, BUFFER_SIZE, 
-                                        "++++++++++++++++++++++++\n"
+                                        "+++++++++++++++++++++++++\n"
                                         "Temi:\n"
                                         "1 - Curiosità sulla Tecnologia\n"
                                         "2 - Cultura Generale\n"
-                                        "++++++++++++++++++++++++\n");
+                                        "+++++++++++++++++++++++++\n");
                                     doppia_send(i, buffer, strlen(buffer));
 
                                     /* Genera e mostra la lista dei partecipanti attivi nel server */
@@ -196,11 +196,11 @@ int main(int argc, char* argv[]) {
 
                         // Creo e invio menù dei temi
                         snprintf(buffer, BUFFER_SIZE, 
-                            "++++++++++++++++++++++++\n"
+                            "+++++++++++++++++++++++++\n"
                             "Temi:\n"
                             "1 - Curiosità sulla Tecnologia\n"
                             "2 - Cultura Generale\n"
-                            "++++++++++++++++++++++++\n");
+                            "+++++++++++++++++++++++++\n");
                         doppia_send(i, buffer, strlen(buffer));
 
                         /* Visualizzo partecipanti Online */
@@ -283,14 +283,13 @@ int main(int argc, char* argv[]) {
                         // Trova il partecipante in base al socket
                         LeaderboardEntry *participant = find_participant_by_socket(i, leaderboard, num_participants);
                         if (participant) {
-                        printf("Ho trovato il partecipante %d\n", i);
                             
                             /* Client vuole procedere alla prossima domanda */
                             if(strstr(client_answer, "next")){
                                 memset(buffer, 0, BUFFER_SIZE);
                                 handle_quiz(i, participant, participant->theme_index == 0 ? tech_questions : general_questions);
                                 // Controllo se ha completato il quiz, in caso lo mostro a video
-                                completed_quiz(leaderboard, num_participants);
+                                completed_quiz(leaderboard, num_participants, participant);
                             }
                             
                             /* Client vuole vedere la Leaderboard */
