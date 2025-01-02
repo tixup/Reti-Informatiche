@@ -28,7 +28,7 @@ void display_sorted_leaderboard(char *buffer, LeaderboardEntry leaderboard[], in
 
 void notify_and_close(fd_set *fd_master, int fd_max, int listener, char *message);
 
-void completed_quiz(LeaderboardEntry leaderboard[], int num_participants);
+void completed_quiz(LeaderboardEntry leaderboard[], int num_participants, LeaderboardEntry *participant);
 
 int verify_server(char *buffer);
 
