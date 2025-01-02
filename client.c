@@ -9,7 +9,7 @@
 
 
 int main(int argc, char* argv[]) {
-
+    
     /* Controllo se la porta è stata inserita correttamente */
     if(argc != 2){
         fprintf(stderr, "Uso corretto: %s <porta> \n", argv[0]);
@@ -78,9 +78,9 @@ int main(int argc, char* argv[]) {
           strcpy(buffer, "START_Partecipo\0");
           doppia_send(sock, buffer, strlen(buffer));
       } 
-        // Se l'utente sceglie una decisone non valida
+        // Se l'utente sceglie una decisone non valida chiudo il socket
         else {
-          printf("Hai scelto un opzione non valida.\n");
+          printf("Hai scelto un opzione non valida. Arrivederci.\n");
           close(sock);
           return 0;
       }
@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
           
           // Riceve e stampa esito nickname 
           control = doppia_recv(sock, buffer);
-          if(verify_server(buffer) == 0 ||  control <= 0){
+          if(verify_server(buffer) == 0 || control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
           }
@@ -125,7 +125,7 @@ int main(int argc, char* argv[]) {
               doppia_send(sock, formatted_response, strlen(formatted_response));
               memset(buffer, 0, BUFFER_SIZE);
               control = doppia_recv(sock, buffer); 
-              if(verify_server(buffer) == 0 ||  control <= 0){
+              if(verify_server(buffer) == 0 || control <= 0){
                   printf("Il Server si è disconnesso. Quiz terminato.\n");
                   break;
               }
@@ -135,7 +135,7 @@ int main(int argc, char* argv[]) {
           
           // Riceve e stampa menù Temi
           control = doppia_recv(sock, buffer); 
-          if(verify_server(buffer) == 0 ||  control <= 0){
+          if(verify_server(buffer) == 0 || control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
           }
@@ -146,7 +146,7 @@ int main(int argc, char* argv[]) {
         } else {
           // Riceve e stampa direttamente menù dei Temi dato che ha già nickname
           control = doppia_recv(sock, buffer);
-          if(verify_server(buffer) == 0 ||  control <= 0){
+          if(verify_server(buffer) == 0 || control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
           }
@@ -181,6 +181,7 @@ int main(int argc, char* argv[]) {
           } 
           // Se la scelta non è valida
           else {
+              printf("Scelta non valida. Arrivederci.\n");
               close(sock);
               return 0;
           }
@@ -189,7 +190,7 @@ int main(int argc, char* argv[]) {
           memset(buffer, 0, BUFFER_SIZE);
           // Ricezione esito del tema
           control = doppia_recv(sock, buffer);
-          if(verify_server(buffer) == 0 ||  control <= 0){
+          if(verify_server(buffer) == 0 || control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
           }
@@ -211,7 +212,7 @@ int main(int argc, char* argv[]) {
           
           // Riceve una domanda o messaggio dal server
           control = doppia_recv(sock, buffer); 
-          if(verify_server(buffer) == 0 ||  control <= 0){
+          if(verify_server(buffer) == 0 || control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
           }
@@ -228,25 +229,33 @@ int main(int argc, char* argv[]) {
               printf("--> Quiz terminato. %s\n", buffer);
               break; // Fine del quiz
           }
-
-          printf("%s", buffer); // Mostra il messaggio ricevuto
+          
+          // Mostra il messaggio ricevuto
+          printf("%s", buffer); 
 
           fgets(response, BUFFER_SIZE, stdin);
           response[strcspn(response, "\n")] = '\0';
           
           // Formatta la risposta come "ANSWER_risposta"
           snprintf(formatted_response, BUFFER_SIZE + 7, "ANSWER_%s", response);
-          // Invia la risposta al server
-          doppia_send(sock, formatted_response, strlen(formatted_response)); 
+          
+          /* Caso particolare: se client risponde 'next' (1) o 'showscore' (2) ad una domanda
+                1)  Passa direttamente alla domanda successiva, il punteggio alla domanda
+                    corrente sarà equivalente a zero.
+                2)  Mostra la leaderboard del tema corrente, il client potrà comunque rispondere
+                    alla domanda corrente subito dopo oppure "skipparla" digitando 'next'.
+          */
           
           /* Caso particolare: se client risponde 'endquiz' ad una domanda */
           // (senza aspettare il menù comandi)
           if (strncmp(formatted_response, "ANSWER_endquiz", 14) == 0) {
+              // Invia la risposta al server
+              doppia_send(sock, formatted_response, strlen(formatted_response)); 
               // Elimino nickname
               nck = false;
               memset(buffer, 0, BUFFER_SIZE);
               control = doppia_recv(sock, buffer);
-              if(verify_server(buffer) == 0 ||  control <= 0){
+              if(verify_server(buffer) == 0 || control <= 0){
                   printf("Il Server si è disconnesso. Quiz terminato.\n");
                   break;
               }
@@ -255,13 +264,22 @@ int main(int argc, char* argv[]) {
               break; // Fine del quiz
           }
           
+          // Invia la risposta al server
+          doppia_send(sock, formatted_response, strlen(formatted_response)); 
+          
+          // Reset del buffer
           memset(buffer, 0, BUFFER_SIZE);
           
           // Riceve e mostra esito della risposta e il menù comandi
           control = doppia_recv(sock, buffer); 
-          if(verify_server(buffer) == 0 ||  control <= 0){
+          if(verify_server(buffer) == 0 || control <= 0){
               printf("Il Server si è disconnesso. Quiz terminato.\n");
               break;
+          }
+          // Controlla se il messaggio indica la fine del quiz dopo le domande
+          if (strncmp(buffer, "Hai totalizzato", 15) == 0) {
+              printf("--> Quiz terminato. %s\n", buffer);
+              break; // Fine del quiz
           }
           printf("%s", buffer);
           
