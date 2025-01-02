@@ -61,9 +61,9 @@ int doppia_recv(int socket, char *buffer){
  */
 int doppia_send(int socket, char *buffer, int len){
     int ret;
-    // lunghezza in big endian
+    // Lunghezza in big endian
     ret = htonl(len);
-    // inviamo la lunghezza
+    // Inviamo la lunghezza
     ret = send(socket, &ret, sizeof(int), 0);           
     if(ret == -1){
         perror("len doppia_send. ");
@@ -286,6 +286,13 @@ int remove_participant_by_socket(int client_sock, LeaderboardEntry leaderboard[]
  * @return 1 se il partecipante è stato rimosso, 0 altrimenti.
  */
 void display_sorted_leaderboard(char *buffer, LeaderboardEntry leaderboard[], int num_participants, int theme_index) {
+    
+    // Strutture dati
+    int score_i;
+    int score_j;
+    int score;
+    char entry[BUFFER_SIZE];
+  
     // Copia i partecipanti in un array temporaneo
     LeaderboardEntry temp_leaderboard[num_participants];
     memcpy(temp_leaderboard, leaderboard, sizeof(LeaderboardEntry) * num_participants);
@@ -293,8 +300,8 @@ void display_sorted_leaderboard(char *buffer, LeaderboardEntry leaderboard[], in
     // Ordina l'array temporaneo in base al punteggio del tema scelto
     for (int i = 0; i < num_participants - 1; i++) {
         for (int j = i + 1; j < num_participants; j++) {
-            int score_i = (theme_index == 0) ? temp_leaderboard[i].score_tech : temp_leaderboard[i].score_general;
-            int score_j = (theme_index == 0) ? temp_leaderboard[j].score_tech : temp_leaderboard[j].score_general;
+            score_i = (theme_index == 0) ? temp_leaderboard[i].score_tech : temp_leaderboard[i].score_general;
+            score_j = (theme_index == 0) ? temp_leaderboard[j].score_tech : temp_leaderboard[j].score_general;
 
             if (score_i < score_j) {
                 // Scambio
@@ -307,14 +314,21 @@ void display_sorted_leaderboard(char *buffer, LeaderboardEntry leaderboard[], in
 
     // Costruisci il messaggio della leaderboard
     memset(buffer, 0, BUFFER_SIZE);
-    snprintf(buffer, BUFFER_SIZE, "Leaderboard tema corrente:\n");
+    if(theme_index == 0){
+        snprintf(buffer, BUFFER_SIZE, "Leaderboard tema Tecnologia:\n");
+    } else {
+        snprintf(buffer, BUFFER_SIZE, "Leaderboard tema Generale:\n");
+    }
+    
 
     for (int i = 0; i < num_participants; i++) {
-        int score = (theme_index == 0) ? temp_leaderboard[i].score_tech : temp_leaderboard[i].score_general;
-        char entry[BUFFER_SIZE];
+        score = (theme_index == 0) ? temp_leaderboard[i].score_tech : temp_leaderboard[i].score_general;
         snprintf(entry, BUFFER_SIZE, "- %s (%d)\n", temp_leaderboard[i].nickname, score);
         strncat(buffer, entry, BUFFER_SIZE - strlen(buffer) - 1);
     }
+    
+    strcpy(entry, "Digita 'next' per proseguire o rispondi alla domanda precedente.\n");
+    strncat(buffer, entry, BUFFER_SIZE - strlen(buffer) - 1);
 }
 
 
@@ -363,27 +377,40 @@ void display_sorted_leaderboard(char *buffer, LeaderboardEntry leaderboard[], in
  * 
  * @param leaderboard Array della leaderboard.
  * @param num_participants Puntatore al numero di partecipanti attivi.
+ * @param participant Utente della Leaderboard
  */
- void completed_quiz(LeaderboardEntry leaderboard[], int num_participants){
-    printf("\n--- Quiz Completati ---\n");
+ void completed_quiz(LeaderboardEntry leaderboard[], int num_participants, LeaderboardEntry *participant){
     
-    // Partecipanti che hanno completato il tema tecnologia
-    printf("Quiz tema 'tecnologia' completato:\n");
-    for(int i = 0; i < num_participants; i++){
-      if(leaderboard[i].theme_tech_completed){
-          printf("- %s\n", leaderboard[i].nickname);
-      }
+     // Se il client ha completato uno dei due quiz, stampo
+    if( (participant->theme_tech_completed == 1 && participant->current_question == 0) || 
+        (participant->theme_gen_completed == 1 && participant->current_question == 0) ) {
+        
+        printf("\n--- Quiz Completati ---\n");
+    
+        // Partecipanti che hanno completato il tema tecnologia
+        printf("Quiz tema 'tecnologia' completato:\n");
+        for(int i = 0; i < num_participants; i++){
+          if(leaderboard[i].theme_tech_completed){
+              printf("- %s\n", leaderboard[i].nickname);
+          }
+        }
+        
+        printf("\n");
+        
+        // Partecipanti che hanno completato il tema generale
+        printf("Quiz tema 'generale' completato:\n");
+        for(int i = 0; i < num_participants; i++){
+          if(leaderboard[i].theme_gen_completed){
+              printf("- %s\n", leaderboard[i].nickname);
+          }
+        }
+        
+        printf("\n");
+    } 
+    // Altrimenti non stampo nulla
+    else {
+        return;
     }
     
-    printf("\n");
     
-    // Partecipanti che hanno completato il tema generale
-    printf("Quiz tema 'generale' completato:\n");
-    for(int i = 0; i < num_participants; i++){
-      if(leaderboard[i].theme_gen_completed){
-          printf("- %s\n", leaderboard[i].nickname);
-      }
-    }
-    
-    printf("\n");
  }
