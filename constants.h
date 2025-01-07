@@ -1,7 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#define PORT 3653            // Porta su cui il server si mette in ascolto
+#define PORT 3653             // Porta su cui il server si mette in ascolto
 #define MAX_CLIENTS 10        // Numero massimo di client supportati
 #define MAX_QUESTION_LEN 256  // Lunghezza massima del testo di una domanda
 #define MAX_ANSWER_LEN 128    // Lunghezza massima del testo di una risposta
